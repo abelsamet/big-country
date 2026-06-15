@@ -36,6 +36,13 @@
   .subline{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.02em;margin-bottom:24px}
 
   .pickers{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+  .swaprow{display:flex;justify-content:center;margin:14px 0 2px}
+  .swapbtn{display:inline-flex;align-items:center;gap:9px;background:var(--panel);border:1px solid var(--grid);
+    color:var(--paper);font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    padding:9px 18px;border-radius:30px;cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+  .swapbtn:hover{border-color:var(--comp);color:var(--comp-line)}
+  .swapbtn:focus-visible{outline:2px solid var(--comp);outline-offset:2px}
+  .swapbtn .ico{font-size:14px;letter-spacing:0}
   .picker label{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
     color:var(--muted2);display:block;margin-bottom:7px}
   .picker.base label{color:var(--base)} .picker.comp label{color:var(--comp)}
@@ -130,6 +137,10 @@
     </div>
   </div>
 
+  <div class="swaprow">
+    <button class="swapbtn" id="swapBtn" type="button" aria-label="Swap the two places"><span class="ico">&#8644;</span> Swap places</button>
+  </div>
+
   <div class="plate">
     <div class="legend">
       <div class="lg"><span class="sw base"></span><span class="nm" id="legA">—</span><span class="ar" id="legAa"></span></div>
@@ -171,14 +182,31 @@ function makeFlag(iso2, name, w, cls){
 }
 const label = c => c.kind==='state' ? `${c.name} (U.S. state)` : c.name;
 
-/* projection: per-place azimuthal equal-area, shared scale */
+/* projection: per-place azimuthal equal-area, shared scale.
+   Framing centers and zooms on each place's MAIN landmass cluster, so two
+   places of any size fill the frame and overlap. Detached far territories
+   (e.g. French Guiana) are still drawn but excluded from framing, so the
+   zoom is not thrown off by an outline that secretly spans two continents. */
 const BASE = 1200;
+const MAXDIST_PX = 1000; /* ~5500 km at BASE: keeps Alaska, drops French Guiana */
+const dist = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1]);
 function projectPlace(c){
   const ctr = d3.geoCentroid(c.geometry);
   const proj = d3.geoAzimuthalEqualArea().rotate([-ctr[0],-ctr[1]]).scale(BASE).translate([0,0]);
   const path = d3.geoPath(proj);
-  const feat = {type:'Feature', geometry:c.geometry};
-  return { d: path(feat), centroid: path.centroid(feat), bounds: path.bounds(feat), areaPx: path.area(feat) };
+  const full = {type:'Feature', geometry:c.geometry};
+  const d = path(full), areaPx = path.area(full);
+  const polyList = c.geometry.type==='Polygon' ? [c.geometry.coordinates] : c.geometry.coordinates;
+  let parts = polyList.map(coords=>{
+    const f = {type:'Feature', geometry:{type:'Polygon', coordinates:coords}};
+    return { area:path.area(f), bounds:path.bounds(f), centroid:path.centroid(f) };
+  }).filter(p=>p.area>0);
+  parts.sort((a,b)=>b.area-a.area);
+  const main = parts[0];
+  const keep = parts.filter(p => p===main || (p.area > 0.05*main.area && dist(p.centroid, main.centroid) < MAXDIST_PX));
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  keep.forEach(p=>{ x0=Math.min(x0,p.bounds[0][0]); y0=Math.min(y0,p.bounds[0][1]); x1=Math.max(x1,p.bounds[1][0]); y1=Math.max(y1,p.bounds[1][1]); });
+  return { d, areaPx, fbounds:[[x0,y0],[x1,y1]], fcenter:[(x0+x1)/2,(y0+y1)/2] };
 }
 
 const W=1000, H=620, CX=W/2, CY=H/2, PAD=70;
@@ -193,10 +221,10 @@ function render(){
   for(let y=0;y<=H;y+=50) g.append('line').attr('x1',0).attr('y1',y).attr('x2',W).attr('y2',y).attr('stroke','var(--grid)').attr('stroke-width', y%250===0?0.8:0.4).attr('opacity',y%250===0?.7:.45);
   if(!A || !B){ updateText(); return; }
   const pa = projectPlace(A), pb = projectPlace(B);
-  const fit = p => { const w=p.bounds[1][0]-p.bounds[0][0], h=p.bounds[1][1]-p.bounds[0][1];
+  const fit = p => { const w=p.fbounds[1][0]-p.fbounds[0][0], h=p.fbounds[1][1]-p.fbounds[0][1];
     return Math.min((W-2*PAD)/w, (H-2*PAD)/h); };
   const z = Math.min(fit(pa), fit(pb));
-  const tf = p => `translate(${CX - z*p.centroid[0]},${CY - z*p.centroid[1]}) scale(${z})`;
+  const tf = p => `translate(${CX - z*p.fcenter[0]},${CY - z*p.fcenter[1]}) scale(${z})`;
   svg.append('path').attr('d',pa.d).attr('transform',tf(pa))
      .attr('fill','var(--base-soft)').attr('stroke','var(--base-line)')
      .attr('stroke-width',1.6/z).attr('stroke-linejoin','round');
@@ -262,6 +290,11 @@ function setupCombo(comboId, inputId, menuId, flagId, which){
 }
 const cA=setupCombo('comboA','inputA','menuA','flagA','A');
 const cB=setupCombo('comboB','inputB','menuB','flagB','B');
+
+document.getElementById('swapBtn').addEventListener('click',()=>{
+  const a=A, b=B; if(!a||!b) return;
+  cA.choose(b); cB.choose(a);
+});
 
 const find = (nm,kind) => PLACES.find(c=>c.name===nm && c.kind===kind);
 const defA = find('United States','country') || PLACES.find(c=>c.name.includes('United States'));
