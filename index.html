@@ -108,10 +108,92 @@
     .combo input{font-size:18px} .legend{font-size:11px}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* ---- tabs + games ---- */
+  .tabs{display:flex;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--grid);padding-bottom:0}
+  .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    padding:10px 14px 12px;cursor:pointer;transition:color .15s,border-color .15s;margin-bottom:-1px}
+  .tab:hover{color:var(--paper)}
+  .tab.active{color:var(--comp-line);border-bottom-color:var(--comp)}
+  .view{display:none} .view.active{display:block}
+
+  .ghead{margin-bottom:18px}
+  .gtitle{font-family:var(--display);font-weight:300;font-size:clamp(26px,5vw,46px);line-height:1.05;margin:12px 0 6px;letter-spacing:-.01em}
+  .gtitle b{font-weight:600}
+  .gtitle .a{color:var(--base-line)} .gtitle .b{color:var(--comp-line)}
+  .gsub{font-family:var(--mono);font-size:12.5px;color:var(--muted);letter-spacing:.02em;max-width:680px;line-height:1.6}
+
+  .gbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:18px 0 20px}
+  .seg{display:inline-flex;background:var(--panel);border:1px solid var(--grid);border-radius:9px;padding:3px;gap:3px}
+  .seg button{background:none;border:none;color:var(--muted);font-family:var(--mono);font-size:11px;
+    letter-spacing:.08em;text-transform:uppercase;padding:7px 12px;border-radius:7px;cursor:pointer;transition:.15s}
+  .seg button:hover{color:var(--paper)}
+  .seg button.on{background:var(--panel2);color:var(--comp-line);box-shadow:0 0 0 1px var(--grid)}
+  .seglabel{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-right:-6px}
+  .chk{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;
+    letter-spacing:.04em;color:var(--muted);cursor:pointer;user-select:none}
+  .chk input{accent-color:var(--comp);width:15px;height:15px}
+  .gbtn{margin-left:auto;background:var(--comp);border:none;color:#06231f;font-family:var(--mono);
+    font-weight:600;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:10px 18px;
+    border-radius:9px;cursor:pointer;transition:.15s}
+  .gbtn:hover{filter:brightness(1.08)} .gbtn.ghost{background:var(--panel);color:var(--paper);box-shadow:0 0 0 1px var(--grid) inset}
+  .gbtn:focus-visible{outline:2px solid var(--comp);outline-offset:2px}
+
+  .target{display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,#16314a,#122840);
+    border:1px solid var(--grid);border-left:3px solid var(--base);border-radius:12px;padding:16px 20px;margin-bottom:18px}
+  .target .nm{font-family:var(--display);font-weight:500;font-size:26px;line-height:1.05}
+  .target .meta{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:3px}
+  .target .ar{margin-left:auto;text-align:right;font-family:var(--mono);font-size:15px;color:var(--paper)}
+  .target .ar small{display:block;color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+
+  .guessrow{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:8px}
+  .guessrow .combo{flex:1;min-width:220px}
+  .turnflag{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--base-line);margin-bottom:10px;min-height:14px}
+
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
+  .options.four{grid-template-columns:1fr 1fr}
+  .option{display:flex;align-items:center;gap:13px;background:var(--panel);border:1px solid var(--grid);
+    border-radius:12px;padding:16px 18px;cursor:pointer;transition:border-color .15s,background .15s,transform .05s;text-align:left}
+  .option:hover{border-color:var(--comp);background:var(--panel2)}
+  .option:active{transform:scale(.99)}
+  .option .nm{font-family:var(--display);font-weight:500;font-size:21px;line-height:1.04}
+  .option .meta{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.05em;margin-top:2px}
+  .option .rv{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--muted);opacity:0;transition:opacity .25s}
+  .option.show .rv{opacity:1}
+  .option.right{border-color:var(--comp-line);background:rgba(79,184,168,.14)} .option.right .rv{color:var(--comp-line)}
+  .option.wrong{border-color:#c2614f;background:rgba(194,97,79,.12)} .option.wrong .rv{color:#e58b78}
+  .option.dim{opacity:.6}
+  .option[disabled]{cursor:default}
+
+  .reveal{margin:14px 0 6px;min-height:0}
+  .reveal.show{margin-top:18px}
+  .verdict{font-family:var(--display);font-weight:300;font-size:clamp(20px,3.4vw,30px);line-height:1.15;margin-bottom:6px}
+  .verdict b{font-weight:600} .verdict .good{color:var(--comp-line)} .verdict .bad{color:#e58b78}
+  .rdetail{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.7}
+  .rdetail b{color:var(--paper);font-weight:500}
+  .gsvgwrap{margin-top:14px;background:linear-gradient(180deg,#0c1a29,#0a1623);border:1px solid var(--grid);border-radius:12px;overflow:hidden}
+  .gsvgwrap svg{display:block;width:100%;height:auto}
+
+  .score{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--grid);
+    font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.03em}
+  .score .big{color:var(--paper);font-size:15px}
+  .score .p{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border-radius:8px;border:1px solid var(--grid)}
+  .score .p.lead{border-color:var(--comp);color:var(--comp-line)}
+  .score .sp{flex:1}
+  @media (max-width:680px){ .options{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="tabs">
+    <button class="tab active" data-view="compare" type="button">Compare</button>
+    <button class="tab" data-view="closest" type="button">Closest Size</button>
+    <button class="tab" data-view="bigger" type="button">Bigger?</button>
+  </div>
+
+  <section id="view-compare" class="view active">
   <div class="eyebrow">True area &middot; countries, states, cities, continents</div>
   <h1 class="hero" id="hero">Pick two places to compare.</h1>
   <div class="subline" id="subline">Shapes are drawn at one shared area scale, so what you see is what's true.</div>
@@ -164,6 +246,59 @@
       <div class="metric" id="popRowB" style="display:none"><span class="k">Population</span><span class="v" id="popB">—</span></div>
     </div>
   </div>
+  </section>
+
+  <section id="view-closest" class="view">
+    <div class="ghead">
+      <div class="eyebrow">Game &middot; closest in size</div>
+      <h2 class="gtitle">Guess the <b class="b">closest</b> in size.</h2>
+      <p class="gsub">You are given a place. Find the country, state, or other unit whose area is as close as you can get. The closer your guess, the higher the score.</p>
+    </div>
+    <div class="gbar">
+      <span class="seglabel">Players</span>
+      <div class="seg" id="c-players"><button class="on" data-v="1" type="button">1</button><button data-v="2" type="button">2</button></div>
+      <label class="chk"><input type="checkbox" id="c-pool"> Include cities &amp; towns</label>
+      <button class="gbtn" id="c-new" type="button">New target</button>
+    </div>
+    <div class="target" id="c-target"></div>
+    <div class="turnflag" id="c-turn"></div>
+    <div class="guessrow">
+      <div class="picker comp">
+        <label>Your guess</label>
+        <div class="combo" id="comboC">
+          <div class="combo-field"><span id="flagC"></span>
+            <input id="inputC" type="text" placeholder="Search a place" autocomplete="off" spellcheck="false">
+            <span class="caret">&#9660;</span></div>
+          <div class="menu" id="menuC"></div>
+        </div>
+      </div>
+      <button class="gbtn ghost" id="c-submit" type="button">Submit</button>
+    </div>
+    <div class="reveal" id="c-reveal"></div>
+    <div class="score" id="c-score"></div>
+  </section>
+
+  <section id="view-bigger" class="view">
+    <div class="ghead">
+      <div class="eyebrow">Game &middot; which is bigger</div>
+      <h2 class="gtitle">Which one is <b class="a">bigger</b>?</h2>
+      <p class="gsub">Pick the largest of the options. Easy spreads the sizes far apart, hard keeps them close.</p>
+    </div>
+    <div class="gbar">
+      <span class="seglabel">Players</span>
+      <div class="seg" id="b-players"><button class="on" data-v="1" type="button">1</button><button data-v="2" type="button">2</button></div>
+      <span class="seglabel">Options</span>
+      <div class="seg" id="b-count"><button class="on" data-v="2" type="button">2</button><button data-v="4" type="button">4</button></div>
+      <span class="seglabel">Level</span>
+      <div class="seg" id="b-diff"><button data-v="easy" type="button">Easy</button><button class="on" data-v="medium" type="button">Medium</button><button data-v="hard" type="button">Hard</button></div>
+      <label class="chk"><input type="checkbox" id="b-pool"> Include cities &amp; towns</label>
+      <button class="gbtn" id="b-new" type="button">New round</button>
+    </div>
+    <div class="turnflag" id="b-turn"></div>
+    <div class="options" id="b-options"></div>
+    <div class="reveal" id="b-reveal"></div>
+    <div class="score" id="b-score"></div>
+  </section>
 
   <p class="foot">
     <b>How this works.</b> Each place is drawn with its own azimuthal equal-area projection centered on it, then both are placed at one shared area-to-pixel ratio and aligned at their centers, so what you see is a true size-to-size comparison. Areas are measured geodesically from the exact outline shown, so the number under each name is the real area of that silhouette.
@@ -274,13 +409,13 @@ function setPop(side, c){
   else row.style.display='none';
 }
 
-function setupCombo(comboId, inputId, menuId, flagId, which){
+function setupCombo(comboId, inputId, menuId, flagId, onChoose, source){
   const combo=document.getElementById(comboId), input=document.getElementById(inputId),
         menu=document.getElementById(menuId), flagHost=document.getElementById(flagId);
   let hl=-1, current=[];
   function build(filter){
     const q=(filter||'').trim().toLowerCase();
-    current = PLACES.filter(c=>c.name.toLowerCase().includes(q));
+    current = (source?source():PLACES).filter(c=>c.name.toLowerCase().includes(q));
     menu.innerHTML='';
     if(!current.length){ menu.innerHTML='<div class="none">No place matches</div>'; return; }
     current.slice(0,120).forEach((c,i)=>{
@@ -295,7 +430,7 @@ function setupCombo(comboId, inputId, menuId, flagId, which){
   }
   function open(){ combo.classList.add('open'); build(input.value); }
   function close(){ combo.classList.remove('open'); hl=-1; }
-  function choose(c){ input.value=c.name; flagHost.replaceChildren(makeFlag(c.iso2,c.name,80,null,c.badge)); close(); pick(c,which); }
+  function choose(c){ input.value=c.name; flagHost.replaceChildren(makeFlag(c.iso2,c.name,80,null,c.badge)); close(); onChoose(c); }
   input.addEventListener('focus',()=>{input.select&&input.select();open();});
   input.addEventListener('input',()=>{hl=-1;combo.classList.add('open');build(input.value);});
   input.addEventListener('keydown',e=>{
@@ -305,10 +440,10 @@ function setupCombo(comboId, inputId, menuId, flagId, which){
     else if(e.key==='Escape'){close();input.blur();}
   });
   document.addEventListener('click',e=>{ if(!combo.contains(e.target)) close(); });
-  return {choose};
+  return {choose, clear:()=>{input.value='';flagHost.replaceChildren();}};
 }
-const cA=setupCombo('comboA','inputA','menuA','flagA','A');
-const cB=setupCombo('comboB','inputB','menuB','flagB','B');
+const cA=setupCombo('comboA','inputA','menuA','flagA', c=>pick(c,'A'));
+const cB=setupCombo('comboB','inputB','menuB','flagB', c=>pick(c,'B'));
 
 document.getElementById('swapBtn').addEventListener('click',()=>{
   const a=A, b=B; if(!a||!b) return;
@@ -321,6 +456,203 @@ const defB = find('Texas','state') || find('France','country');
 if(defA) cA.choose(defA);
 if(defB) cB.choose(defB);
 render();
+
+/* ===================== GAMES ===================== */
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+};
+const BASE_KINDS = new Set(['country','state','continent','eu']);
+const poolFor = all => all ? PLACES.slice() : PLACES.filter(c=>BASE_KINDS.has(c.kind));
+const rnd = arr => arr[Math.floor(Math.random()*arr.length)];
+const ratioOf = (a,b)=>{ const r=a.mi2/b.mi2; return r>=1?r:1/r; };
+const fmtRatio = r => r<10?r.toFixed(2):r<100?r.toFixed(1):''+Math.round(r);
+const tagText = c => ROLE[c.kind]||'Place';
+
+function setHash(v){ try{ if(location.hash.slice(1)!==v) history.replaceState(null,'','#'+v); }catch(e){} }
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('view-'+t.dataset.view).classList.add('active');
+    setHash(t.dataset.view);
+  });
+});
+function seg(id,cb){
+  const el=document.getElementById(id);
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    el.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); cb(b.dataset.v);
+  }));
+}
+/* draw two silhouettes into a game panel (reuses projectPlace) */
+function drawInto(host, P1, P2){
+  const W=480,H=300,CX=W/2,CY=H/2,PAD=30;
+  host.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="size silhouettes"></svg>';
+  const svg=d3.select(host.querySelector('svg')), g=svg.append('g');
+  for(let x=0;x<=W;x+=48) g.append('line').attr('x1',x).attr('y1',0).attr('x2',x).attr('y2',H).attr('stroke','var(--grid)').attr('stroke-width',.4).attr('opacity',.4);
+  for(let y=0;y<=H;y+=48) g.append('line').attr('x1',0).attr('y1',y).attr('x2',W).attr('y2',y).attr('stroke','var(--grid)').attr('stroke-width',.4).attr('opacity',.4);
+  const pa=projectPlace(P1), pb=projectPlace(P2);
+  const fit=p=>{const w=p.fbounds[1][0]-p.fbounds[0][0],h=p.fbounds[1][1]-p.fbounds[0][1];return Math.min((W-2*PAD)/w,(H-2*PAD)/h);};
+  const z=Math.min(fit(pa),fit(pb));
+  const tf=p=>'translate('+(CX-z*p.fcenter[0])+','+(CY-z*p.fcenter[1])+') scale('+z+')';
+  svg.append('path').attr('d',pa.d).attr('transform',tf(pa)).attr('fill','var(--base-soft)').attr('stroke','var(--base-line)').attr('stroke-width',1.5/z).attr('stroke-linejoin','round');
+  svg.append('path').attr('d',pb.d).attr('transform',tf(pb)).attr('fill','var(--comp-soft)').attr('stroke','var(--comp-line)').attr('stroke-width',1.5/z).attr('stroke-linejoin','round');
+}
+
+/* ---------- GAME 1: CLOSEST SIZE ---------- */
+const g1={ mode:1, includeAll:false, target:null, sel:null, guesses:[], turn:0,
+           total:0, rounds:0, wins:[0,0], bestRound:store.get('cs_bestRound',0) };
+function g1pool(){ return poolFor(g1.includeAll).filter(c=>c!==g1.target); }
+const cC=setupCombo('comboC','inputC','menuC','flagC', c=>{ g1.sel=c; }, g1pool);
+
+function g1NewTarget(){
+  g1.target=rnd(poolFor(g1.includeAll)); g1.sel=null; g1.guesses=[]; g1.turn=0;
+  cC.clear();
+  const c=g1.target, host=document.getElementById('c-target'); host.replaceChildren();
+  host.appendChild(makeFlag(c.iso2,c.name,80,'base',c.badge));
+  const d=document.createElement('div'); d.innerHTML='<div class="nm">'+c.name+'</div><div class="meta">'+tagText(c)+'</div>'; host.appendChild(d);
+  const ar=document.createElement('div'); ar.className='ar'; ar.innerHTML='<small>Area</small>'+fmt(c.mi2)+' sq mi'; host.appendChild(ar);
+  const rev=document.getElementById('c-reveal'); rev.innerHTML=''; rev.classList.remove('show');
+  g1turn(); g1score();
+}
+function g1turn(){
+  document.getElementById('c-turn').textContent =
+    (g1.mode===2 && g1.guesses.length<2) ? 'Player '+(g1.guesses.length+1)+' — make your guess' : '';
+}
+function g1Submit(){
+  if(!g1.sel){ document.getElementById('c-turn').textContent='Search and choose a place first.'; return; }
+  if(g1.sel===g1.target){ document.getElementById('c-turn').textContent='Pick a different place than the target.'; return; }
+  g1.guesses.push(g1.sel); g1.sel=null; cC.clear();
+  if(g1.mode===2 && g1.guesses.length<2){ g1turn(); return; }
+  g1Reveal();
+}
+function g1Reveal(){
+  const t=g1.target;
+  let best=null,bestR=Infinity;
+  poolFor(g1.includeAll).forEach(c=>{ if(c===t) return; const r=ratioOf(c,t); if(r<1.001) return; if(r<bestR){bestR=r;best=c;} });
+  const rev=document.getElementById('c-reveal'); rev.classList.add('show');
+  if(g1.mode===1){
+    const guess=g1.guesses[0], r=ratioOf(guess,t), sc=Math.max(0,Math.round(100/r));
+    g1.total+=sc; g1.rounds++;
+    if(sc>g1.bestRound){ g1.bestRound=sc; store.set('cs_bestRound',sc); }
+    rev.innerHTML='<div class="verdict">'+verdict1(sc)+' <b class="good">'+sc+'</b> points.</div>'+
+      '<div class="rdetail"><b>'+guess.name+'</b> is <b>'+fmtRatio(r)+'×</b> the size of '+t.name+'.<br>'+
+      'The closest possible answer was <b>'+best.name+'</b> ('+fmtRatio(bestR)+'×).</div>'+
+      '<div class="gsvgwrap" id="c-svg"></div>';
+    drawInto(document.getElementById('c-svg'), t, guess);
+  } else {
+    const a=g1.guesses[0], b=g1.guesses[1], ra=ratioOf(a,t), rb=ratioOf(b,t);
+    const tie=Math.abs(ra-rb)<1e-9, p1=ra<rb;
+    if(!tie){ g1.wins[p1?0:1]++; }
+    rev.innerHTML='<div class="verdict">'+(tie?'A tie!':'<b class="good">Player '+(p1?1:2)+'</b> wins the round.')+'</div>'+
+      '<div class="rdetail"><b>P1 '+a.name+'</b>: '+fmtRatio(ra)+'× &nbsp;·&nbsp; <b>P2 '+b.name+'</b>: '+fmtRatio(rb)+'×<br>'+
+      'The closest possible answer was <b>'+best.name+'</b> ('+fmtRatio(bestR)+'×).</div>'+
+      '<div class="gsvgwrap" id="c-svg"></div>';
+    drawInto(document.getElementById('c-svg'), t, (p1?a:b));
+  }
+  document.getElementById('c-turn').textContent=''; g1score();
+}
+function g1score(){
+  const el=document.getElementById('c-score');
+  if(g1.mode===1){
+    const avg=g1.rounds?Math.round(g1.total/g1.rounds):0;
+    el.innerHTML='<span class="big">Score '+g1.total+'</span><span>Rounds '+g1.rounds+'</span><span>Avg '+avg+'</span><span>Best round '+g1.bestRound+'</span>';
+  } else {
+    el.innerHTML='<span class="p'+(g1.wins[0]>g1.wins[1]?' lead':'')+'">Player 1 — '+g1.wins[0]+'</span>'+
+                 '<span class="p'+(g1.wins[1]>g1.wins[0]?' lead':'')+'">Player 2 — '+g1.wins[1]+'</span>';
+  }
+}
+const verdict1 = sc => sc>=90?'Bullseye!':sc>=70?'Great guess —':sc>=45?'Not bad —':sc>=20?'Close-ish —':'Way off —';
+seg('c-players',v=>{ g1.mode=+v; g1.total=0; g1.rounds=0; g1.wins=[0,0]; g1NewTarget(); });
+document.getElementById('c-pool').addEventListener('change',e=>{ g1.includeAll=e.target.checked; g1NewTarget(); });
+document.getElementById('c-new').addEventListener('click',g1NewTarget);
+document.getElementById('c-submit').addEventListener('click',g1Submit);
+
+/* ---------- GAME 2: BIGGER? ---------- */
+const g2={ mode:1, count:2, diff:'medium', includeAll:false, options:[], winner:null,
+           answered:false, streak:0, best:store.get('bg_best',0), turn:0, pts:[0,0] };
+const BANDS={ easy:[3,100], medium:[1.55,2.6], hard:[1.06,1.34] };
+function pickByArea(pool, lo, hi, ex){
+  const cand=pool.filter(c=>!ex.has(c) && c.mi2>=lo && c.mi2<=hi);
+  return cand.length?rnd(cand):null;
+}
+function g2NewRound(){
+  const pool=poolFor(g2.includeAll).filter(c=>c.mi2>0);
+  const [lo,hi]=BANDS[g2.diff];
+  let set=null;
+  for(let tries=0; tries<500 && !set; tries++){
+    const winner=rnd(pool), ex=new Set([winner]), others=[];
+    const ru=pickByArea(pool, winner.mi2/hi, winner.mi2/lo, ex);
+    if(!ru){ continue; }
+    ex.add(ru); others.push(ru);
+    if(g2.count===4){
+      let ok=true;
+      for(let k=0;k<2;k++){
+        const pick = g2.diff==='hard'
+          ? pickByArea(pool, winner.mi2/hi, winner.mi2/lo, ex)
+          : pickByArea(pool, ru.mi2/6, ru.mi2/1.15, ex);
+        if(!pick){ ok=false; break; }
+        ex.add(pick); others.push(pick);
+      }
+      if(!ok) continue;
+    }
+    const all=[winner,...others], areas=all.map(c=>c.mi2);
+    if(new Set(areas).size!==areas.length) continue;
+    if(Math.max.apply(null,areas)!==winner.mi2) continue;
+    set={winner,all};
+  }
+  if(!set){ const s=[...pool].sort(()=>Math.random()-0.5).slice(0,g2.count).sort((a,b)=>b.mi2-a.mi2); set={winner:s[0],all:s}; }
+  g2.winner=set.winner;
+  g2.options=[...set.all].sort(()=>Math.random()-0.5);
+  g2.answered=false;
+  const host=document.getElementById('b-options'); host.className='options'+(g2.count===4?' four':''); host.replaceChildren();
+  g2.options.forEach((c,i)=>{
+    const b=document.createElement('button'); b.className='option'; b.type='button';
+    b.appendChild(makeFlag(c.iso2,c.name,80,null,c.badge));
+    const d=document.createElement('div'); d.innerHTML='<div class="nm">'+c.name+'</div><div class="meta">'+tagText(c)+'</div>'; b.appendChild(d);
+    const rv=document.createElement('div'); rv.className='rv'; rv.textContent=fmt(c.mi2)+' sq mi'; b.appendChild(rv);
+    b.addEventListener('click',()=>g2Pick(i)); host.appendChild(b);
+  });
+  const rev=document.getElementById('b-reveal'); rev.innerHTML=''; rev.classList.remove('show');
+  g2turn(); g2score();
+}
+function g2turn(){ document.getElementById('b-turn').textContent=(g2.mode===2 && !g2.answered)?'Player '+(g2.turn+1)+' — your turn':''; }
+function g2Pick(i){
+  if(g2.answered) return; g2.answered=true;
+  const chosen=g2.options[i], correct=chosen===g2.winner;
+  [...document.querySelectorAll('#b-options .option')].forEach((b,j)=>{
+    const c=g2.options[j]; b.classList.add('show'); b.setAttribute('disabled','');
+    if(c===g2.winner) b.classList.add('right'); else if(j===i) b.classList.add('wrong'); else b.classList.add('dim');
+  });
+  if(g2.mode===1){ if(correct){ g2.streak++; if(g2.streak>g2.best){g2.best=g2.streak; store.set('bg_best',g2.best);} } else g2.streak=0; }
+  else if(correct){ g2.pts[g2.turn]++; }
+  const rev=document.getElementById('b-reveal'); rev.classList.add('show');
+  const r=ratioOf(g2.winner,chosen);
+  let msg = correct ? '<span class="good">Correct!</span> ' : '<span class="bad">Nope.</span> ';
+  msg += '<b>'+g2.winner.name+'</b> is the biggest'+(correct?'':', '+fmtRatio(r)+'× the size of '+chosen.name)+'.';
+  rev.innerHTML='<div class="verdict">'+msg+'</div><div class="gsvgwrap" id="b-svg"></div>';
+  drawInto(document.getElementById('b-svg'), g2.winner, correct?(g2.options.find(o=>o!==g2.winner)||g2.winner):chosen);
+  if(g2.mode===2) g2.turn=1-g2.turn;
+  g2turn(); g2score();
+}
+function g2score(){
+  const el=document.getElementById('b-score');
+  if(g2.mode===1) el.innerHTML='<span class="big">Streak '+g2.streak+'</span><span>Best streak '+g2.best+'</span>';
+  else el.innerHTML='<span class="p'+(g2.pts[0]>g2.pts[1]?' lead':'')+'">Player 1 — '+g2.pts[0]+'</span>'+
+                    '<span class="p'+(g2.pts[1]>g2.pts[0]?' lead':'')+'">Player 2 — '+g2.pts[1]+'</span>';
+}
+seg('b-players',v=>{ g2.mode=+v; g2.pts=[0,0]; g2.turn=0; g2.streak=0; g2NewRound(); });
+seg('b-count',v=>{ g2.count=+v; g2NewRound(); });
+seg('b-diff',v=>{ g2.diff=v; g2NewRound(); });
+document.getElementById('b-pool').addEventListener('change',e=>{ g2.includeAll=e.target.checked; g2NewRound(); });
+document.getElementById('b-new').addEventListener('click',g2NewRound);
+
+/* deep link + init */
+const _iv=(location.hash.slice(1)||'compare');
+const _it=document.querySelector('.tab[data-view="'+_iv+'"]'); if(_it) _it.click();
+g1NewTarget(); g2NewRound();
 </script>
 </body>
 </html>
