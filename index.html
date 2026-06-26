@@ -409,7 +409,7 @@ function setPop(side, c){
   else row.style.display='none';
 }
 
-function setupCombo(comboId, inputId, menuId, flagId, onChoose, source){
+function setupCombo(comboId, inputId, menuId, flagId, onChoose, source, hideArea){
   const combo=document.getElementById(comboId), input=document.getElementById(inputId),
         menu=document.getElementById(menuId), flagHost=document.getElementById(flagId);
   let hl=-1, current=[];
@@ -423,7 +423,7 @@ function setupCombo(comboId, inputId, menuId, flagId, onChoose, source){
       o.appendChild(makeFlag(c.iso2,c.name,80,null,c.badge));
       const nm=document.createElement('span'); nm.className='nm'; nm.textContent=c.name; o.appendChild(nm);
       if(PILL[c.kind]){ const pl=document.createElement('span'); pl.className='pill'; pl.textContent=PILL[c.kind]; o.appendChild(pl); }
-      const ar=document.createElement('span'); ar.className='ar'; ar.textContent=fmt(c.mi2)+' mi²'; o.appendChild(ar);
+      if(!hideArea){ const ar=document.createElement('span'); ar.className='ar'; ar.textContent=fmt(c.mi2)+' mi²'; o.appendChild(ar); }
       o.addEventListener('mousedown',e=>{e.preventDefault();choose(c);});
       menu.appendChild(o);
     });
@@ -505,7 +505,7 @@ function drawInto(host, P1, P2){
 const g1={ mode:1, includeAll:false, target:null, sel:null, guesses:[], turn:0,
            total:0, rounds:0, wins:[0,0], bestRound:store.get('cs_bestRound',0) };
 function g1pool(){ return poolFor(g1.includeAll).filter(c=>c!==g1.target); }
-const cC=setupCombo('comboC','inputC','menuC','flagC', c=>{ g1.sel=c; }, g1pool);
+const cC=setupCombo('comboC','inputC','menuC','flagC', c=>{ g1.sel=c; }, g1pool, true);
 
 function g1NewTarget(){
   g1.target=rnd(poolFor(g1.includeAll)); g1.sel=null; g1.guesses=[]; g1.turn=0;
