@@ -216,6 +216,31 @@
   .score .p.lead{font-weight:600;box-shadow:0 0 0 1px currentColor inset}
   .score .sp{flex:1}
   @media (max-width:680px){ .options{grid-template-columns:1fr} }
+  .ladbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:2px 0 12px}
+  .ladpips{display:flex;gap:6px;flex-wrap:wrap}
+  .pip{width:28px;height:28px;border-radius:7px;display:grid;place-items:center;
+    font-family:var(--mono);font-weight:600;font-size:12px;background:var(--panel);
+    border:1px solid var(--grid);color:var(--muted2)}
+  .pip.done{background:rgba(79,184,168,.16);border-color:rgba(79,184,168,.5);color:var(--comp-line)}
+  .pip.cur{background:rgba(224,164,88,.18);border-color:var(--base);color:#fff;
+    box-shadow:0 0 0 2px rgba(224,164,88,.25)}
+  .ladrace{display:flex;gap:12px;align-items:stretch;margin:6px 0 14px}
+  .ladrace .rc{flex:1;border:1px solid var(--grid);border-radius:12px;padding:10px 16px;background:var(--panel)}
+  .ladrace .rc .who{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--muted2)}
+  .ladrace .rc .pts{font-family:var(--display);font-weight:700;font-size:32px;line-height:1;margin-top:3px}
+  .ladrace .rc.p1{border-color:rgba(224,164,88,.5)} .ladrace .rc.p1 .pts{color:var(--base-line)}
+  .ladrace .rc.p2{border-color:rgba(79,184,168,.5)} .ladrace .rc.p2 .pts{color:var(--comp-line)}
+  .ladrace .rc.lead{box-shadow:0 0 0 2px rgba(255,255,255,.07)}
+  .ladrace .goal{align-self:center;text-align:center;font-family:var(--mono);font-size:12px;
+    line-height:1.5;color:var(--muted2);white-space:nowrap}
+  .ladnext{margin-top:14px}
+  .levelend{border:1px solid var(--grid);border-radius:14px;padding:20px;background:var(--panel);text-align:center;margin-bottom:12px}
+  .levelend .big{font-family:var(--display);font-weight:700;font-size:23px;line-height:1.15;margin-bottom:6px}
+  .levelend .sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+  .levelend.win .big{color:var(--comp-line)}
+  .levelend.lose .big{color:#E69A9A}
+  .levelend.champ .big{color:#FFD97A}
 </style>
 </head>
 <body>
@@ -224,6 +249,7 @@
     <button class="tab active" data-view="compare" type="button">Compare</button>
     <button class="tab" data-view="closest" type="button">Closest Size</button>
     <button class="tab" data-view="bigger" type="button">Bigger?</button>
+    <button class="tab" data-view="levels" type="button">Levels</button>
   </div>
 
   <section id="view-compare" class="view active">
@@ -338,6 +364,35 @@
     <div class="passcard" id="b-pass" style="display:none"></div>
     <div class="reveal" id="b-reveal"></div>
     <div class="score" id="b-score"></div>
+  </section>
+
+  <section id="view-levels" class="view">
+    <div class="ghead">
+      <div class="eyebrow">Game &middot; climb the ladder</div>
+      <h2 class="gtitle">Race the <b class="b">Bot</b> to Level 11.</h2>
+      <p class="gsub">Each round is one of the two games, picked at random: guess the closest in size, or pick which is bigger. Win the round and you get the point. First to 10 clears the level and moves up. If the Bot reaches 10 first, you drop a level. Clear Level 11 to win it all.</p>
+    </div>
+    <div class="ladbar">
+      <div class="ladpips" id="lad-pips"></div>
+      <button class="gbtn ghost" id="lad-restart" type="button">Restart at Level 1</button>
+    </div>
+    <div class="ladrace" id="lad-race"></div>
+    <div class="turnbanner" id="lad-turn"></div>
+    <div class="ladround" id="lad-round"></div>
+    <div class="guessrow" id="lad-guessrow" style="display:none">
+      <div class="picker comp">
+        <label>Your guess</label>
+        <div class="combo" id="comboL">
+          <div class="combo-field"><span id="flagL"></span>
+            <input id="inputL" type="text" placeholder="Search a place" autocomplete="off" spellcheck="false">
+            <span class="caret">&#9660;</span></div>
+          <div class="menu" id="menuL"></div>
+        </div>
+      </div>
+      <button class="gbtn ghost" id="lad-submit" type="button">Submit</button>
+    </div>
+    <div class="reveal" id="lad-reveal"></div>
+    <div class="ladnext" id="lad-next"></div>
   </section>
 
   <p class="foot">
@@ -802,10 +857,196 @@ seg('b-diff',v=>{ g2.diff=v; g2NewRound(); });
 document.getElementById('b-pool').addEventListener('change',e=>{ g2.includeAll=e.target.checked; g2NewRound(); });
 document.getElementById('b-new').addEventListener('click',g2NewRound);
 
+/* ---------- GAME 3: LEVELS (ladder vs Bot) ---------- */
+const LADLEVELS=[
+  {bg:0.35, cs:[0.30,0.60], diff:'easy',   count:2},
+  {bg:0.40, cs:[0.26,0.55], diff:'easy',   count:2},
+  {bg:0.45, cs:[0.22,0.50], diff:'easy',   count:2},
+  {bg:0.48, cs:[0.18,0.45], diff:'easy',   count:2},
+  {bg:0.52, cs:[0.15,0.40], diff:'easy',   count:4},
+  {bg:0.58, cs:[0.12,0.34], diff:'medium', count:2},
+  {bg:0.63, cs:[0.10,0.28], diff:'medium', count:2},
+  {bg:0.68, cs:[0.08,0.22], diff:'medium', count:4},
+  {bg:0.74, cs:[0.06,0.18], diff:'hard',   count:2},
+  {bg:0.80, cs:[0.04,0.13], diff:'hard',   count:4},
+  {bg:0.85, cs:[0.02,0.08], diff:'hard',   count:4}
+];
+const LADMAX=LADLEVELS.length, GOAL=10;
+const g3={ level: Math.min(LADMAX, Math.max(1, store.get('lad_level',1))),
+           best: Math.min(LADMAX, Math.max(1, store.get('lad_best',1))),
+           you:0, bot:0, type:null, target:null, sel:null,
+           options:[], winner:null, winIdx:-1, count:2, done:false };
+function ladCfg(){ return LADLEVELS[g3.level-1]; }
+function ladPool(){ return poolFor(false).filter(c=>c.mi2>0); }
+const lC=setupCombo('comboL','inputL','menuL','flagL', c=>{ g3.sel=c; }, ()=>ladPool().filter(c=>c!==g3.target), true);
+
+function ladBotClosest(target){
+  const [lo,hi]=ladCfg().cs;
+  const cands=ladPool().filter(c=>c!==target).map(c=>[c,ratioOf(c,target)]).filter(x=>x[1]>=1.001).sort((a,b)=>a[1]-b[1]);
+  if(!cands.length) return target;
+  const N=cands.length, i0=Math.min(Math.floor(lo*N),N-1), i1=Math.min(Math.max(i0,Math.floor(hi*N)-1),N-1);
+  return cands[i0+Math.floor(Math.random()*(i1-i0+1))][0];
+}
+function ladBotBigger(){
+  if(Math.random()<ladCfg().bg) return g3.winIdx;
+  const wrong=g3.options.map((o,j)=>j).filter(j=>j!==g3.winIdx);
+  return wrong.length?wrong[Math.floor(Math.random()*wrong.length)]:g3.winIdx;
+}
+function ladBuildBigger(){
+  const pool=ladPool(), cfg=ladCfg(), [lo,hi]=BANDS[cfg.diff], count=cfg.count;
+  let set=null;
+  for(let tries=0; tries<500 && !set; tries++){
+    const winner=wpick(pool), ex=new Set([winner]), others=[];
+    const ru=pickByArea(pool, winner.mi2/hi, winner.mi2/lo, ex);
+    if(!ru) continue;
+    ex.add(ru); others.push(ru);
+    if(count===4){
+      let ok=true;
+      for(let k=0;k<2;k++){
+        const pick = cfg.diff==='hard' ? pickByArea(pool, winner.mi2/hi, winner.mi2/lo, ex)
+                                       : pickByArea(pool, ru.mi2/6, ru.mi2/1.15, ex);
+        if(!pick){ ok=false; break; } ex.add(pick); others.push(pick);
+      }
+      if(!ok) continue;
+    }
+    const all=[winner,...others], areas=all.map(c=>c.mi2);
+    if(new Set(areas).size!==areas.length) continue;
+    if(Math.max.apply(null,areas)!==winner.mi2) continue;
+    set={winner,all};
+  }
+  if(!set){ const s=[...pool].sort(()=>Math.random()-0.5).slice(0,count).sort((a,b)=>b.mi2-a.mi2); set={winner:s[0],all:s}; }
+  g3.winner=set.winner; g3.count=count;
+  g3.options=[...set.all].sort(()=>Math.random()-0.5);
+  g3.winIdx=g3.options.indexOf(g3.winner);
+}
+function ladPips(){
+  const host=document.getElementById('lad-pips'); host.replaceChildren();
+  for(let i=1;i<=LADMAX;i++){
+    const p=document.createElement('span'); p.className='pip'+(i<g3.level?' done':'')+(i===g3.level?' cur':'');
+    p.textContent=i; host.appendChild(p);
+  }
+}
+function ladRace(){
+  document.getElementById('lad-race').innerHTML=
+    '<div class="rc p1'+(g3.you>g3.bot?' lead':'')+'"><div class="who">You</div><div class="pts">'+g3.you+'</div></div>'+
+    '<div class="goal">first to '+GOAL+'<br>Level '+g3.level+' / '+LADMAX+'</div>'+
+    '<div class="rc p2'+(g3.bot>g3.you?' lead':'')+'"><div class="who">Bot</div><div class="pts">'+g3.bot+'</div></div>';
+}
+function ladRenderRound(){
+  const round=document.getElementById('lad-round'); round.replaceChildren();
+  const gr=document.getElementById('lad-guessrow');
+  if(g3.type==='closest'){
+    gr.style.display='';
+    const c=g3.target, t=document.createElement('div'); t.className='target';
+    t.appendChild(makeFlag(c.iso2,c.name,80,'base',c.badge));
+    const d=document.createElement('div'); d.innerHTML='<div class="nm">'+c.name+'</div><div class="meta">'+tagText(c)+'</div>'; t.appendChild(d);
+    const ar=document.createElement('div'); ar.className='ar'; ar.innerHTML='<small>Area</small>'+fmt(c.mi2)+' sq mi'; t.appendChild(ar);
+    round.appendChild(t);
+    lC.clear();
+    setBanner('lad-turn','Closest in size \u2014 beat the Bot\u2019s guess','p1');
+  } else {
+    gr.style.display='none';
+    const host=document.createElement('div'); host.className='options'+(g3.count===4?' four':'');
+    g3.options.forEach((c,i)=>{
+      const b=document.createElement('button'); b.className='option'; b.type='button';
+      b.appendChild(makeFlag(c.iso2,c.name,80,null,c.badge));
+      const d=document.createElement('div'); d.innerHTML='<div class="nm">'+c.name+'</div><div class="meta">'+tagText(c)+'</div>'; b.appendChild(d);
+      const marks=document.createElement('div'); marks.className='marks'; b.appendChild(marks);
+      const rv=document.createElement('div'); rv.className='rv'; rv.textContent=fmt(c.mi2)+' sq mi'; b.appendChild(rv);
+      b.addEventListener('click',()=>ladPickBigger(i)); host.appendChild(b);
+    });
+    round.appendChild(host);
+    setBanner('lad-turn','Which is bigger?','p1');
+  }
+}
+function ladNewRound(){
+  const rev=document.getElementById('lad-reveal'); rev.classList.remove('show'); rev.innerHTML='';
+  document.getElementById('lad-next').replaceChildren();
+  g3.done=false; g3.sel=null;
+  g3.type = Math.random()<0.5 ? 'closest' : 'bigger';
+  if(g3.type==='closest') g3.target=wpick(ladPool()); else ladBuildBigger();
+  ladRenderRound();
+}
+function ladApplyOutcome(outcome, detailHTML, P1, P2){
+  if(outcome==='you') g3.you++; else if(outcome==='bot') g3.bot++;
+  const verdict = outcome==='you' ? '<span class="good">You win the round \u2014 +1 point.</span>'
+                : outcome==='bot' ? '<span class="bad">The Bot wins the round \u2014 +1 for the Bot.</span>'
+                : 'Tie \u2014 no point. Next round.';
+  const rev=document.getElementById('lad-reveal'); rev.classList.add('show');
+  rev.innerHTML='<div class="verdict">'+verdict+'</div>'+detailHTML+'<div class="gsvgwrap" id="lad-svg"></div>';
+  drawInto(document.getElementById('lad-svg'), P1, P2);
+  setBanner('lad-turn','','');
+  ladRace();
+  if(g3.you>=GOAL) ladLevelEnd('win');
+  else if(g3.bot>=GOAL) ladLevelEnd('lose');
+  else { const host=document.getElementById('lad-next'); const btn=document.createElement('button');
+    btn.className='gbtn'; btn.type='button'; btn.textContent='Next round'; btn.addEventListener('click',ladNewRound); host.appendChild(btn); }
+}
+function ladSubmitClosest(){
+  if(g3.done || g3.type!=='closest') return;
+  if(!g3.sel){ setBanner('lad-turn','Search and choose a place first.','note'); return; }
+  if(g3.sel===g3.target){ setBanner('lad-turn','Pick a different place than the target.','note'); return; }
+  g3.done=true;
+  const t=g3.target, you=g3.sel, bg=ladBotClosest(t), ry=ratioOf(you,t), rb=ratioOf(bg,t);
+  const outcome = Math.abs(ry-rb)<1e-9 ? 'tie' : (ry<rb?'you':'bot');
+  let best=null,bestR=Infinity;
+  ladPool().forEach(c=>{ if(c===t) return; const r=ratioOf(c,t); if(r<1.001) return; if(r<bestR){bestR=r;best=c;} });
+  const detail='<div class="rdetail"><b>You</b> picked '+you.name+' ('+fmtRatio(ry)+'\u00d7) &nbsp;\u00b7&nbsp; <b>Bot</b> picked '+bg.name+' ('+fmtRatio(rb)+'\u00d7)<br>The closest possible answer was <b>'+best.name+'</b> ('+fmtRatio(bestR)+'\u00d7).</div>';
+  ladApplyOutcome(outcome, detail, t, outcome==='bot'?bg:you);
+}
+function ladPickBigger(i){
+  if(g3.done || g3.type!=='bigger') return;
+  g3.done=true;
+  const botI=ladBotBigger(), youRight=i===g3.winIdx, botRight=botI===g3.winIdx;
+  const outcome = (youRight&&!botRight)?'you' : (botRight&&!youRight)?'bot' : 'tie';
+  [...document.querySelectorAll('#lad-round .option')].forEach((b,j)=>{
+    b.classList.add('show'); b.setAttribute('disabled','');
+    const by=[]; if(i===j) by.push(0); if(botI===j) by.push(1);
+    if(j===g3.winIdx) b.classList.add('right'); else if(by.length) b.classList.add('wrong'); else b.classList.add('dim');
+    const marks=b.querySelector('.marks');
+    by.forEach(p=>{ const m=document.createElement('span'); m.className='pm '+(p===0?'p1':'p2'); m.textContent=p===0?'You':'Bot'; marks.appendChild(m); });
+  });
+  const detail='<div class="rdetail"><b>'+g3.winner.name+'</b> is the biggest.</div>';
+  ladApplyOutcome(outcome, detail, g3.winner, g3.options.find((o,j)=>j!==g3.winIdx)||g3.winner);
+}
+function ladLevelEnd(result){
+  let cls, big, sub;
+  if(result==='win'){
+    if(g3.level>=LADMAX){
+      g3.best=LADMAX; store.set('lad_best',g3.best); store.set('lad_level',g3.level);
+      cls='champ'; big='\u2605 You beat all '+LADMAX+' levels! \u2605';
+      sub='You are the True Size champion. Keep playing Level '+LADMAX+', or restart from the top.';
+    } else {
+      g3.level++; g3.best=Math.max(g3.best,g3.level); store.set('lad_level',g3.level); store.set('lad_best',g3.best);
+      cls='win'; big='Level cleared!'; sub='You won '+GOAL+'\u2013'+g3.bot+'. On to Level '+g3.level+'.';
+    }
+  } else {
+    const was=g3.level; g3.level=Math.max(1,g3.level-1); store.set('lad_level',g3.level); cls='lose'; big='The Bot wins this level.';
+    sub = was===1 ? 'You lost '+g3.you+'\u2013'+GOAL+'. Staying at Level 1 \u2014 give it another go.'
+                  : 'You lost '+g3.you+'\u2013'+GOAL+'. Dropping to Level '+g3.level+'.';
+  }
+  g3.you=0; g3.bot=0; ladPips(); ladRace();
+  const host=document.getElementById('lad-next'); host.replaceChildren();
+  const box=document.createElement('div'); box.className='levelend '+cls;
+  box.innerHTML='<div class="big">'+big+'</div><div class="sub">'+sub+'</div>';
+  const btn=document.createElement('button'); btn.className='gbtn'; btn.type='button';
+  btn.textContent = cls==='champ' ? 'Play on' : 'Continue';
+  btn.addEventListener('click', ladNewRound); box.appendChild(btn); host.appendChild(box);
+}
+function ladRestart(){
+  g3.level=1; g3.you=0; g3.bot=0; store.set('lad_level',1);
+  ladPips(); ladRace(); ladNewRound();
+}
+function ladInit(){
+  document.getElementById('lad-submit').addEventListener('click', ladSubmitClosest);
+  document.getElementById('lad-restart').addEventListener('click', ladRestart);
+  ladPips(); ladRace(); ladNewRound();
+}
+
 /* deep link + init */
 const _iv=(location.hash.slice(1)||'compare');
 const _it=document.querySelector('.tab[data-view="'+_iv+'"]'); if(_it) _it.click();
-g1NewTarget(); g2NewRound();
+g1NewTarget(); g2NewRound(); ladInit();
 </script>
 </body>
 </html>
